@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Book Demo Form</title>
+	<style>
+		:root {
+			--bg: #f4f7fb;
+			--card: #ffffff;
+			--text: #1f2937;
+			--muted: #6b7280;
+			--primary: #0f3d7a;
+			--accent: #f97316;
+			--line: #dbe3ef;
+			--shadow: 0 18px 45px rgba(15, 61, 122, 0.12);
+			--radius: 18px;
+		}
+
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			font-family: Arial, Helvetica, sans-serif;
+			color: var(--text);
+			background:
+				radial-gradient(circle at top left, rgba(249, 115, 22, 0.12), transparent 30%),
+				radial-gradient(circle at top right, rgba(15, 61, 122, 0.12), transparent 28%),
+				var(--bg);
+			min-height: 100vh;
+		}
+
+		.header {
+			position: sticky;
+			top: 0;
+			z-index: 20;
+			background: rgba(255, 255, 255, 0.92);
+			backdrop-filter: blur(10px);
+			border-bottom: 1px solid var(--line);
+		}
+
+		.header-inner,
+		.hero,
+		.records,
+		.modal-content {
+			width: min(1120px, calc(100% - 32px));
+			margin: 0 auto;
+		}
+
+		.header-inner {
+			min-height: 72px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 16px;
+		}
+
+		.brand {
+			font-size: 1.2rem;
+			font-weight: 700;
+			letter-spacing: 0.2px;
+			color: var(--primary);
+		}
+
+		.brand span {
+			color: var(--accent);
+		}
+
+		.actions {
+			display: flex;
+			gap: 10px;
+			flex-wrap: wrap;
+		}
+
+		.live-strip {
+			display: inline-flex;
+			align-items: center;
+			gap: 10px;
+			flex-wrap: wrap;
+			padding: 10px 14px;
+			margin: 18px 0 24px;
+			border: 1px solid var(--line);
+			border-radius: 999px;
+			background: rgba(255, 255, 255, 0.78);
+			box-shadow: 0 8px 22px rgba(15, 61, 122, 0.06);
+			font-size: 13px;
+			color: var(--muted);
+		}
+
+		.live-dot {
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			background: #16a34a;
+			box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5);
+			animation: pulse 1.8s infinite;
+		}
+
+		.live-chip {
+			font-weight: 700;
+			color: var(--primary);
+		}
+
+		.live-divider {
+			color: #c2cad8;
+		}
+
+		@keyframes pulse {
+			0% {
+				box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5);
+			}
+			70% {
+				box-shadow: 0 0 0 10px rgba(22, 163, 74, 0);
+			}
+			100% {
+				box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
+			}
+		}
+
+		.btn {
+			border: 0;
+			border-radius: 999px;
+			padding: 12px 18px;
+			font-size: 14px;
+			font-weight: 700;
+			cursor: pointer;
+			text-decoration: none;
+			transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+		}
+
+		.btn:hover {
+			transform: translateY(-1px);
+		}
+
+		.btn-primary {
+			background: var(--primary);
+			color: #fff;
+			box-shadow: 0 10px 24px rgba(15, 61, 122, 0.18);
+		}
+
+		.btn-primary:hover {
+			background: #0a2f60;
+		}
+
+		.btn-outline {
+			background: #fff;
+			color: var(--primary);
+			border: 1px solid var(--line);
+		}
+
+		.hero {
+			padding: 72px 0 32px;
+			display: grid;
+			grid-template-columns: 1.2fr 0.8fr;
+			gap: 28px;
+			align-items: center;
+		}
+
+		.hero h1 {
+			font-size: clamp(2rem, 4vw, 3.5rem);
+			line-height: 1.1;
+			margin-bottom: 14px;
+			color: var(--primary);
+		}
+
+		.hero p {
+			font-size: 1.02rem;
+			line-height: 1.7;
+			color: var(--muted);
+			margin-bottom: 24px;
+			max-width: 620px;
+		}
+
+		.hero-card {
+			background: linear-gradient(180deg, #ffffff, #f9fbff);
+			border: 1px solid var(--line);
+			border-radius: var(--radius);
+			padding: 24px;
+			box-shadow: var(--shadow);
+		}
+
+		.hero-card h2 {
+			font-size: 1.1rem;
+			margin-bottom: 10px;
+			color: var(--primary);
+		}
+
+		.hero-card ul {
+			list-style: none;
+			display: grid;
+			gap: 10px;
+			color: var(--muted);
+			font-size: 0.95rem;
+		}
+
+		.hero-card li::before {
+			content: "•";
+			color: var(--accent);
+			margin-right: 8px;
+			font-weight: 700;
+		}
+
+		.records {
+			padding: 18px 0 72px;
+			display: none;
+		}
+
+		.records.show {
+			display: block;
+		}
+
+		.panel {
+			background: var(--card);
+			border: 1px solid var(--line);
+			border-radius: var(--radius);
+			box-shadow: var(--shadow);
+			overflow: hidden;
+		}
+
+		.panel-head {
+			padding: 20px 22px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 12px;
+			border-bottom: 1px solid var(--line);
+			flex-wrap: wrap;
+		}
+
+		.panel-head h2 {
+			font-size: 1.1rem;
+			color: var(--primary);
+		}
+
+		.panel-head p {
+			color: var(--muted);
+			font-size: 0.92rem;
+			margin-top: 4px;
+		}
+
+		.panel-actions {
+			display: flex;
+			gap: 10px;
+			flex-wrap: wrap;
+		}
+
+		.table-wrap {
+			overflow-x: auto;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			min-width: 860px;
+		}
+
+		th, td {
+			padding: 14px 16px;
+			text-align: left;
+			border-bottom: 1px solid var(--line);
+			vertical-align: top;
+			font-size: 14px;
+		}
+
+		th {
+			background: #f8fbff;
+			color: var(--primary);
+			font-size: 13px;
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+		}
+
+		.empty-state {
+			padding: 24px;
+			color: var(--muted);
+			text-align: center;
+		}
+
+		.modal {
+			position: fixed;
+			inset: 0;
+			background: rgba(15, 23, 42, 0.55);
+			display: none;
+			align-items: center;
+			justify-content: center;
+			padding: 20px;
+			z-index: 40;
+		}
+
+		.modal.show {
+			display: flex;
+		}
+
+		.modal-content {
+			background: var(--card);
+			border-radius: 24px;
+			box-shadow: 0 30px 80px rgba(15, 23, 42, 0.28);
+			padding: 24px;
+			max-width: 760px;
+			width: 100%;
+			position: relative;
+			animation: pop 0.22s ease-out;
+		}
+
+		@keyframes pop {
+			from {
+				transform: translateY(12px) scale(0.98);
+				opacity: 0;
+			}
+			to {
+				transform: translateY(0) scale(1);
+				opacity: 1;
+			}
+		}
+
+		.modal-head {
+			display: flex;
+			justify-content: space-between;
+			align-items: start;
+			gap: 12px;
+			margin-bottom: 18px;
+		}
+
+		.modal-head h2 {
+			font-size: 1.5rem;
+			color: var(--primary);
+			margin-bottom: 6px;
+		}
+
+		.modal-head p {
+			color: var(--muted);
+			font-size: 0.95rem;
+		}
+
+		.close-btn {
+			border: 0;
+			background: #eef2f7;
+			color: var(--text);
+			width: 38px;
+			height: 38px;
+			border-radius: 999px;
+			cursor: pointer;
+			font-size: 20px;
+			line-height: 1;
+		}
+
+		.form-grid {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 14px;
+		}
+
+		.field.full {
+			grid-column: 1 / -1;
+		}
+
+		.field label {
+			display: block;
+			font-size: 13px;
+			font-weight: 700;
+			margin-bottom: 6px;
+			color: #334155;
+		}
+
+		.field input,
+		.field select,
+		.field textarea {
+			width: 100%;
+			border: 1px solid #cfd8e3;
+			border-radius: 12px;
+			padding: 12px 14px;
+			font-size: 14px;
+			font-family: inherit;
+			background: #fff;
+			color: var(--text);
+		}
+
+		.field input:focus,
+		.field select:focus,
+		.field textarea:focus {
+			outline: 2px solid rgba(15, 61, 122, 0.16);
+			border-color: var(--primary);
+		}
+
+		.field textarea {
+			min-height: 110px;
+			resize: vertical;
+		}
+
+		.modal-actions {
+			display: flex;
+			gap: 12px;
+			flex-wrap: wrap;
+			margin-top: 18px;
+		}
+
+		.status {
+			margin-top: 14px;
+			font-size: 14px;
+			color: var(--muted);
+			min-height: 20px;
+		}
+
+		.status.success {
+			color: #166534;
+			font-weight: 700;
+		}
+
+		.status.error {
+			color: #b91c1c;
+			font-weight: 700;
+		}
+
+		.footer-note {
+			width: min(1120px, calc(100% - 32px));
+			margin: 0 auto 28px;
+			color: var(--muted);
+			font-size: 13px;
+			line-height: 1.6;
+		}
+
+		@media (max-width: 820px) {
+			.hero {
+				grid-template-columns: 1fr;
+				padding-top: 40px;
+			}
+
+			.form-grid {
+				grid-template-columns: 1fr;
+			}
+
+			.field.full {
+				grid-column: auto;
+			}
+		}
+	</style>
+</head>
+<body>
+	<header class="header">
+		<div class="header-inner">
+			<div class="brand">Modiv<span> Demo</span></div>
+			<div class="actions">
+				<button class="btn btn-primary" id="openDemoBtn" type="button">Book Demo</button>
+					<button class="btn btn-outline" id="downloadExcelBtnTop" type="button">Download Excel</button>
+			</div>
+		</div>
+	</header>
+
+	<main>
+		<section class="hero">
+			<div>
+				<h1>Simple demo booking form for students and parents</h1>
+				<p>
+					Click the Book Demo button in the header, fill the form, and save the lead.
+					  Every submission stays in the browser and can be downloaded as Excel when needed.
+				</p>
+				<div class="live-strip" aria-live="polite">
+					<span class="live-dot" aria-hidden="true"></span>
+					<span class="live-chip">Live now</span>
+					<span class="live-divider">|</span>
+					<span id="liveClock">--:--:--</span>
+				</div>
+				<div class="actions">
+					  <button class="btn btn-primary" id="openDemoBtn2" type="button">Book Demo Now</button>
+					  <button class="btn btn-outline" id="downloadExcelBtnTop" type="button">Download Excel</button>
+				</div>
+			</div>
+			<aside class="hero-card">
+				<h2>Private lead storage</h2>
+				<p style="color: var(--muted); line-height: 1.7; font-size: 0.95rem;">
+					Submitted data stays inside the browser and can be downloaded as Excel when needed.
+				</p>
+			</aside>
+		</section>
+	</main>
+
+	<p class="footer-note">
+		Submitted data stays private in the browser and can be downloaded as Excel when required.
+	</p>
+
+	<div class="modal" id="demoModal" aria-hidden="true">
+		<div class="modal-content">
+			<div class="modal-head">
+				<div>
+					<h2>Book a Demo</h2>
+					<p>Fill the details below and submit your request.</p>
+				</div>
+				<button class="close-btn" id="closeModalBtn" type="button" aria-label="Close form">&times;</button>
+			</div>
+
+			<form id="demoForm">
+				<div class="form-grid">
+					<div class="field">
+						<label for="name">Name</label>
+						<input id="name" name="name" type="text" placeholder="Enter your name" required />
+					</div>
+
+					<div class="field">
+						<label for="whatsapp">WhatsApp Number</label>
+						<input id="whatsapp" name="whatsapp" type="tel" placeholder="Enter WhatsApp number" required />
+					</div>
+
+					<div class="field">
+						<label for="className">Class</label>
+						<select id="className" name="className" required>
+							<option value="">Select class</option>
+							<option>Class 1</option>
+							<option>Class 2</option>
+							<option>Class 3</option>
+							<option>Class 4</option>
+							<option>Class 5</option>
+							<option>Class 6</option>
+							<option>Class 7</option>
+							<option>Class 8</option>
+							<option>Class 9</option>
+							<option>Class 10</option>
+							<option>Class 11</option>
+							<option>Class 12</option>
+						</select>
+					</div>
+
+					<div class="field">
+						<label for="subjects">Subjects</label>
+						<input id="subjects" name="subjects" type="text" placeholder="Example: Maths, Science" required />
+					</div>
+
+					<div class="field">
+						<label for="mode">Mode of Learning</label>
+						<select id="mode" name="mode" required>
+							<option value="">Select mode</option>
+							<option>Home Tuition</option>
+							<option>Online</option>
+							<option>Both</option>
+						</select>
+					</div>
+
+					<div class="field">
+						<label for="area">Area</label>
+						<input id="area" name="area" type="text" placeholder="Enter your area" required />
+					</div>
+
+					<div class="field full">
+						<label for="message">You Want to Tell Something</label>
+						<textarea id="message" name="message" placeholder="Write anything important for the tutor or team"></textarea>
+					</div>
+				</div>
+
+				<div class="modal-actions">
+					<button class="btn btn-primary" type="submit">Submit</button>
+					<button class="btn btn-outline" id="clearDataBtn" type="button">Clear Saved Data</button>
+				</div>
+
+				<div class="status" id="formStatus"></div>
+			</form>
+		</div>
+	</div>
+
+	<script>
+		const storageKey = 'modiv-demo-leads';
+
+		const demoModal = document.getElementById('demoModal');
+		const demoForm = document.getElementById('demoForm');
+		const formStatus = document.getElementById('formStatus');
+		const liveClock = document.getElementById('liveClock');
+
+		function getLeads() {
+			try {
+				return JSON.parse(localStorage.getItem(storageKey)) || [];
+			} catch {
+				return [];
+			}
+		}
+
+		function saveLeads(leads) {
+			localStorage.setItem(storageKey, JSON.stringify(leads));
+		}
+
+		function openDemoForm() {
+			demoModal.classList.add('show');
+			demoModal.setAttribute('aria-hidden', 'false');
+			formStatus.textContent = '';
+			formStatus.className = 'status';
+		}
+
+		function closeModal() {
+			demoModal.classList.remove('show');
+			demoModal.setAttribute('aria-hidden', 'true');
+		}
+
+		function showStatus(message, type) {
+			formStatus.textContent = message;
+			formStatus.className = 'status ' + type;
+		}
+
+		function renderTable() {
+			const leads = getLeads();
+			return leads.length;
+		}
+
+		function downloadExcelFile() {
+			const leads = getLeads();
+
+			if (!leads.length) {
+				showStatus('No live data to download yet.', 'error');
+				return;
+			}
+
+			const headers = ['Time', 'Name', 'WhatsApp', 'Class', 'Subjects', 'Mode', 'Area', 'Message'];
+			const csvRows = [headers.join(',')];
+
+			for (const lead of leads) {
+				const row = [lead.time, lead.name, lead.whatsapp, lead.className, lead.subjects, lead.mode, lead.area, lead.message]
+					.map((value) => `"${String(value ?? '').replaceAll('"', '""')}"`)
+					.join(',');
+				csvRows.push(row);
+			}
+
+			const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+			const url = URL.createObjectURL(blob);
+			const link = document.createElement('a');
+			link.href = url;
+			link.download = 'demo-leads.xlsx.csv';
+			document.body.appendChild(link);
+			link.click();
+			link.remove();
+			URL.revokeObjectURL(url);
+			showStatus('Downloaded live data for Excel.', 'success');
+		}
+
+		function updateClock() {
+			const now = new Date();
+			liveClock.textContent = now.toLocaleTimeString([], {
+				hour: '2-digit',
+				minute: '2-digit',
+				second: '2-digit'
+			});
+		}
+
+		document.getElementById('openDemoBtn').addEventListener('click', openDemoForm);
+		document.getElementById('openDemoBtn2').addEventListener('click', openDemoForm);
+		document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+		document.getElementById('downloadExcelBtnTop').addEventListener('click', downloadExcelFile);
+		document.getElementById('clearDataBtn').addEventListener('click', () => {
+			localStorage.removeItem(storageKey);
+			showStatus('Saved data cleared.', 'success');
+		});
+
+		demoModal.addEventListener('click', (event) => {
+			if (event.target === demoModal) {
+				closeModal();
+			}
+		});
+
+		demoForm.addEventListener('submit', (event) => {
+			event.preventDefault();
+
+			const formData = new FormData(demoForm);
+			const lead = {
+				time: new Date().toLocaleString(),
+				name: String(formData.get('name') || '').trim(),
+				whatsapp: String(formData.get('whatsapp') || '').trim(),
+				className: String(formData.get('className') || ''),
+				subjects: String(formData.get('subjects') || '').trim(),
+				mode: String(formData.get('mode') || ''),
+				area: String(formData.get('area') || '').trim(),
+				message: String(formData.get('message') || '').trim() || '-'
+			};
+
+			const leads = getLeads();
+			leads.unshift(lead);
+			saveLeads(leads);
+			renderTable();
+				showStatus('Form submitted successfully. Data saved privately in the browser.', 'success');
+			demoForm.reset();
+			closeModal();
+		});
+
+		updateClock();
+		setInterval(updateClock, 1000);
+		renderTable();
+	</script>
+</body>
+</html>
